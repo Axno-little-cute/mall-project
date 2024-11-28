@@ -24,7 +24,8 @@ import java.util.List;
 public class ItemController {
 
     private final IItemService itemService;
-
+    // TODO 新增ES查询功能
+    private final RabbitTemplate rabbitTemplate;
 
 
     @ApiOperation("分页查询商品")
@@ -58,6 +59,7 @@ public class ItemController {
         // 新增
         itemService.save(BeanUtils.copyBean(item, Item.class));
         //通过mq异步调用修改新增索引库文档
+        rabbitTemplate.convertAndSend();
     }
 
     @ApiOperation("更新商品状态")

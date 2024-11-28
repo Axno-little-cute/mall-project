@@ -1,6 +1,6 @@
 spring:
   application:
-    name: item-service
+    name: search-service
   profiles:
     active: dev
   cloud:
