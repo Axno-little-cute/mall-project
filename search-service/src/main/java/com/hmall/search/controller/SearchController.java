@@ -10,10 +10,12 @@ import com.hmall.common.domain.PageDTO;
 import com.hmall.search.domain.po.Item;
 import com.hmall.search.domain.po.ItemDoc;
 import com.hmall.search.query.ItemPageQuery;
+import com.hmall.search.service.ISearchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHost;
+import org.apiguardian.api.API;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -38,6 +40,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SearchController {
 
+    private final ISearchService searchService;
+    /*
     private final RestHighLevelClient client = new RestHighLevelClient(
             RestClient.builder(HttpHost.create("http://192.168.200.130:9200"))
     );
@@ -47,9 +51,18 @@ public class SearchController {
         if (client != null){
             client.close();
         }
+    }*/
+
+    //搜索功能接口
+    @ApiOperation("搜索商品")
+    @GetMapping("/list")
+    public PageDTO<ItemDoc> search(ItemPageQuery query){
+        return searchService.EsSearch(query);
     }
 
-    @ApiOperation("搜索商品")
+
+    //测试接口
+    /*@ApiOperation("ES搜索商品测试")
     @GetMapping("/{id}")
     public ItemDTO search(@PathVariable("id") Long id) throws IOException {
         //1.创建request对象
@@ -62,5 +75,7 @@ public class SearchController {
         String json = response.getSourceAsString();
         ItemDoc itemDoc = JSONUtil.toBean(json, ItemDoc.class);
         return BeanUtil.copyProperties(itemDoc, ItemDTO.class);
-    }
+    }*/
+
+
 }

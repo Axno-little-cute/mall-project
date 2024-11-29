@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author axno
@@ -70,18 +71,17 @@ public class ItemListener {
             key = "item.updateStatus"
     ))
     public void listenItemUpdateStatus(Long id) throws IOException {
-        //通过feign获取数据库对象
         ItemDTO itemDTO = itemClient.queryItemById(id);
         if (itemDTO == null) {
             return;
         }
-        //对ES索引库中对应数据进行修改
         ItemDoc itemDoc = BeanUtil.copyProperties(itemDTO, ItemDoc.class);
         String jsonStr = JSONUtil.toJsonStr(itemDoc);
         UpdateRequest request = new UpdateRequest("items",itemDoc.getId());
-        request.doc(jsonStr, XContentType.JSON);
-        client.update(request, RequestOptions.DEFAULT);
+        request.doc(jsonStr,XContentType.JSON);
+        client.update(request,RequestOptions.DEFAULT);
         log.info("mq发来商品状态update的消息，往ES中更新{}",jsonStr);
+
     }
 
     /**

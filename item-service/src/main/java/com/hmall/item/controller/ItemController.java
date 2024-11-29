@@ -1,5 +1,6 @@
 package com.hmall.item.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hmall.common.domain.PageDTO;
@@ -13,9 +14,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "商品管理相关接口")
 @RestController
@@ -57,9 +61,14 @@ public class ItemController {
     @PostMapping
     public void saveItem(@RequestBody ItemDTO item) {
         // 新增
-        itemService.save(BeanUtils.copyBean(item, Item.class));
+        //itemService.save(BeanUtils.copyBean(item, Item.class));
+
+        // 自己编写sql 并且返回主键
+        Item item1 = BeanUtil.copyProperties(item, Item.class);
+        itemService.saveItem(item1);
+        Long id = item1.getId();
         //通过mq异步调用修改新增索引库文档
-        rabbitTemplate.convertAndSend("search.direct","item.add",item.getId());
+        rabbitTemplate.convertAndSend("search.direct","item.add",id);
     }
 
     @ApiOperation("更新商品状态")

@@ -9,12 +9,12 @@ import org.apache.ibatis.annotations.Update;
  * <p>
  * 商品表 Mapper 接口
  * </p>
- *
- * @author 虎哥
- * @since 2023-05-05
  */
 public interface ItemMapper extends BaseMapper<Item> {
 
     @Update("UPDATE item SET stock = stock - #{num} WHERE id = #{itemId}")
     void updateStock(OrderDetailDTO orderDetail);
+
+    //新增一条数据的方法，扩展返回主键id
+    void insertOne(Item item);
 }

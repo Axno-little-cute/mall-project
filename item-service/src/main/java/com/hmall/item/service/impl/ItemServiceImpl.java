@@ -9,6 +9,7 @@ import com.hmall.item.domain.dto.OrderDetailDTO;
 import com.hmall.item.domain.po.Item;
 import com.hmall.item.mapper.ItemMapper;
 import com.hmall.item.service.IItemService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,10 @@ import java.util.List;
  * @author 虎哥
  */
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl extends ServiceImpl<ItemMapper, Item> implements IItemService {
+
+    private final ItemMapper itemMapper;
 
     @Override
     @Transactional
@@ -43,5 +47,11 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, Item> implements II
     @Override
     public List<ItemDTO> queryItemByIds(Collection<Long> ids) {
         return BeanUtils.copyList(listByIds(ids), ItemDTO.class);
+    }
+
+    //新增商品 扩展返回主键id的功能
+    @Override
+    public void saveItem(Item item1) {
+        itemMapper.insertOne(item1);
     }
 }
