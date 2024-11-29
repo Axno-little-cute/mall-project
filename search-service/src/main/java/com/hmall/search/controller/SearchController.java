@@ -19,6 +19,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,8 +42,15 @@ public class SearchController {
             RestClient.builder(HttpHost.create("http://192.168.200.130:9200"))
     );
 
+    @AfterEach
+    void tearDown() throws IOException {
+        if (client != null){
+            client.close();
+        }
+    }
+
     @ApiOperation("搜索商品")
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ItemDTO search(@PathVariable("id") Long id) throws IOException {
         //1.创建request对象
         GetRequest request = new GetRequest("items");

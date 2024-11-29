@@ -32,6 +32,19 @@ public class ItemClientFallbackFactory implements FallbackFactory<ItemClient> {
                 //当前业务为研究，先抛异常
                 throw new RuntimeException(cause);
             }
+
+            @Override
+            public ItemDTO queryItemById(Long id) {
+                log.error("查询商品失败：{}",cause);
+                return null;
+            }
+
+            @Override
+            public void saveItem(ItemDTO item) {
+                log.error("新增商品失败：{}",cause);
+                //当前业务为研究，先抛异常
+                throw new RuntimeException(cause);
+            }
         };
     }
 }

@@ -59,7 +59,7 @@ public class ItemController {
         // 新增
         itemService.save(BeanUtils.copyBean(item, Item.class));
         //通过mq异步调用修改新增索引库文档
-        rabbitTemplate.convertAndSend();
+        rabbitTemplate.convertAndSend("search.direct","item.add",item.getId());
     }
 
     @ApiOperation("更新商品状态")
@@ -69,6 +69,8 @@ public class ItemController {
         item.setId(id);
         item.setStatus(status);
         itemService.updateById(item);
+        //通过mq异步调用修改索引库商品状态
+        rabbitTemplate.convertAndSend("search.direct","item.updateStatus",id);
     }
     
     @ApiOperation("更新商品")
@@ -78,12 +80,16 @@ public class ItemController {
         item.setStatus(null);
         // 更新
         itemService.updateById(BeanUtils.copyBean(item, Item.class));
+        //通过mq异步调用更新索引库商品信息
+        rabbitTemplate.convertAndSend("search.direct","item.update",item);
     }
 
     @ApiOperation("根据id删除商品")
     @DeleteMapping("{id}")
     public void deleteItemById(@PathVariable("id") Long id) {
         itemService.removeById(id);
+        //mp异步发送删除商品的消息
+        rabbitTemplate.convertAndSend("search.direct","item.delete",id);
     }
 
     @ApiOperation("批量扣减库存")
